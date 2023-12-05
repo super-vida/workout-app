@@ -3,8 +3,8 @@ package cz.prague.vida.workout.controller;
 import cz.prague.vida.strava.api.StravaV3Client;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.workout.configuration.StravaConfiguration;
-import cz.prague.vida.workout.dao.WorkoutRepository;
 import cz.prague.vida.workout.entity.Activity;
+import cz.prague.vida.workout.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,13 +26,13 @@ public class ActivityManagerController {
 
     @Value("${manageActions}")
     private List<String> manageActions;
-    private final WorkoutRepository workoutRepository;
+    private final ActivityService activityService;
 
     private StravaConfiguration stravaConfiguration;
 
     @Autowired
-    public ActivityManagerController(WorkoutRepository workoutRepository, StravaConfiguration stravaConfiguration) {
-        this.workoutRepository = workoutRepository;
+    public ActivityManagerController(ActivityService activityService, StravaConfiguration stravaConfiguration) {
+        this.activityService = activityService;
         this.stravaConfiguration = stravaConfiguration;
     }
 
@@ -58,24 +58,24 @@ public class ActivityManagerController {
 
     private void deleteAllAndSynchronizeActivities() throws IOException, URISyntaxException, InterruptedException, ParseException {
         StravaV3Client strava = getStravaV3Client();
-        workoutRepository.deleteAll();
+        activityService.deleteAll();
         for (int i = 1; i < 60; i++) {
             List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 30);
             for (DetailedActivity activity : activities) {
                 Activity workout = convertWorkout(activity);
-                workoutRepository.save(workout);
+                activityService.save(workout);
             }
         }
     }
 
     private void synchronizeNewActivities() throws IOException, URISyntaxException, InterruptedException, ParseException {
         StravaV3Client strava = getStravaV3Client();
-        List<DetailedActivity> activities = strava.getCurrentAthleteActivities(1, 1);
+        List<DetailedActivity> activities = strava.getCurrentAthleteActivities(1, 30);
         for (DetailedActivity activity : activities) {
             Activity workout = convertWorkout(activity);
-            Optional<Activity> savedWorkout = workoutRepository.findById(workout.getId());
+            Optional<Activity> savedWorkout = activityService.findById(workout.getId());
             if (savedWorkout.isEmpty()) {
-                workoutRepository.save(workout);
+                activityService.save(workout);
             }
         }
     }
