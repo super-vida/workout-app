@@ -1,6 +1,7 @@
 package cz.prague.vida.strava.api;
 
 import cz.prague.vida.strava.entities.*;
+import cz.prague.vida.strava.model.ActivityStats;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.strava.model.DetailedAthlete;
 
@@ -19,6 +20,9 @@ public interface StravaClient {
     Athlete updateAthlete(HashMap optionalParameters);
     DetailedAthlete findAthlete(int id);
     List<SegmentEffort> findAthleteKOMs(int athleteId);
+
+    ActivityStats getAthleteStats(Long athleteId);
+
     List<SegmentEffort> findAthleteKOMs(int athleteId, int page, int per_page);
     List<Athlete> getCurrentAthleteFriends();
     List<Athlete> getCurrentAthleteFriends(int page, int per_page);

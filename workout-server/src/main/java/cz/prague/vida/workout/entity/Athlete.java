@@ -59,4 +59,8 @@ public class Athlete {
     @OneToMany
     @JoinColumn(name = "athlete_id")
     private List<Activity> activities;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "athlete_id")
+    private ActivityStats activityStats;
 }

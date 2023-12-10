@@ -41,6 +41,7 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/").hasRole("ATHLETE")
                                 .requestMatchers("/activity/**").hasRole("ATHLETE")
+                                .requestMatchers("/athlete/**").hasRole("ATHLETE")
                                 .requestMatchers("/manage/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

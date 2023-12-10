@@ -1,5 +1,6 @@
 package cz.prague.vida.strava.api;
 
+import cz.prague.vida.strava.model.ActivityStats;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.strava.model.DetailedAthlete;
 import org.junit.jupiter.api.BeforeAll;
@@ -72,6 +73,14 @@ public class StravaV3ClientTest {
     public void testFindAthlete() throws Exception {
         DetailedAthlete athlete = strava.findAthlete(athleteId);
         assertNotNull(athlete);
+    }
+
+    @Test
+    public void testAthleteStats() throws Exception {
+        ActivityStats athleteStats = strava.getAthleteStats(athleteId);
+        assertNotNull(athleteStats);
+        System.out.println(athleteStats);
+
     }
 
     //

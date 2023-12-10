@@ -3,6 +3,7 @@ package cz.prague.vida.strava.api;
 import com.google.gson.Gson;
 import cz.prague.vida.strava.authenticator.RefreshTokenResponse;
 import cz.prague.vida.strava.entities.*;
+import cz.prague.vida.strava.model.ActivityStats;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.strava.model.DetailedAthlete;
 import lombok.Data;
@@ -148,6 +149,12 @@ public class StravaV3Client implements StravaClient {
         SegmentEffort[] segmentEffortArray = gson.fromJson(result, SegmentEffort[].class);
         List<SegmentEffort> segmentEfforts = Arrays.asList(segmentEffortArray);
         return segmentEfforts;
+    }
+
+    @Override
+    public ActivityStats getAthleteStats(Long athleteId) {
+        String URL = "https://www.strava.com/api/v3/athletes/" + athleteId + "/stats";
+        return gson.fromJson(getResult(URL), ActivityStats.class);
     }
 
     @Override

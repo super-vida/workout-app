@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface AthleteService {
     Optional<Athlete> getCurrentAthlete();
+
+    void save(Athlete athlete);
 }

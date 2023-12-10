@@ -20,4 +20,9 @@ public class AthleteServiceImpl implements AthleteService {
     public Optional<Athlete> getCurrentAthlete() {
         return athleteRepository.findById(24085813L);
     }
+
+    @Override
+    public void save(Athlete athlete) {
+        athleteRepository.save(athlete);
+    }
 }
