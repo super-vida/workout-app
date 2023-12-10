@@ -6,16 +6,20 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "ACTIVITY")
+@Table(name = "activity")
 public class Activity {
 
     @Id
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "athlete_id")
+    private Long athleteId = 24085813L;
 
     @Column(name = "external_id")
     private String externalId = null;
@@ -162,4 +166,8 @@ public class Activity {
 
     @Column(name = "calories")
     private Float calories = null;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "activity_id")
+    private List<ActivityStream> activityStreams;
 }

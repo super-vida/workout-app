@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static javax.swing.UIManager.get;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -619,7 +620,7 @@ public class StravaV3ClientTest {
     //
     @Test
     public void testFindActivityStreams() throws Exception {
-        List<Map> streams = strava.findActivityStreams(9994612344L, new String[]{"latlng", "time", "distance", "heartrate", "watts", "altitude", "cadence"});
+        List<Map> streams = strava.findActivityStreams(9994612344L, new String[]{"latlng", "time", "distance", "heartrate", "watts", "altitude", "cadence", "temp", "moving", "grade_smooth", "velocity_smooth"});
         assertNotNull(streams);
 
         int size = ((List) streams.get(0).get("data")).size();
@@ -652,7 +653,58 @@ public class StravaV3ClientTest {
 //        fileWriter.close();
     }
 
+    @Test
+    public void testFindActivityStreams2() throws Exception {
+        List<Map> streams = strava.findActivityStreams(9994612344L, new String[]{"latlng", "time", "distance", "heartrate", "watts", "altitude", "cadence", "temp", "moving", "grade_smooth", "velocity_smooth"});
+        assertNotNull(streams);
 
+        int size = ((List) streams.get(0).get("data")).size();
+        StringBuilder s = new StringBuilder();
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < streams.size(); j++) {
+                Map map = (Map) streams.get(j);
+                String type = (String) map.get("type");
+                Object object = ((List) map.get("data")).get(i);
+                if ("latlng".equals(type)) {
+                    s.append(", latlng=" + object);
+                }
+                else if ("time".equals(type)) {
+                    s.append(", time=" + object);
+                }
+                else if ("distance".equals(type)) {
+                    s.append(", distance=" + object);
+                }
+                else if ("heartrate".equals(type)) {
+                    s.append(", heartrate=" + object);
+                }
+                else if ("watts".equals(type)) {
+                    s.append(", watts=" + object);
+                }
+                else if ("altitude".equals(type)) {
+                    s.append(", altitude=" + object);
+                }
+                else if ("cadence".equals(type)) {
+                    s.append(", cadence=" + object);
+                }
+                else if ("temp".equals(type)) {
+                    s.append(", temp=" + object);
+                }
+                else if ("moving".equals(type)) {
+                    s.append(", moving=" + object);
+                }
+                else if ("grade_smooth".equals(type)) {
+                    s.append(", grade_smooth=" + object);
+                }
+                else if ("velocity_smooth".equals(type)) {
+                    s.append(", velocity_smooth=" + object);
+                }
+            }
+            System.out.println("saving new stream index=" + i + 1 + s.toString());
+            s = new StringBuilder();
+        }
+
+    }
     //
     //
     //    @Test

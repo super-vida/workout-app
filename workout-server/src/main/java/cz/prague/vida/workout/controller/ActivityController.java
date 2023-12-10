@@ -30,9 +30,11 @@ public class ActivityController {
 //        return "activity/activity-list";
 //    }
 
+
+
     @GetMapping("/list")
     public String listActivities(Model model, @RequestParam(defaultValue = "0") int page) {
-        PageRequest pageRequest = PageRequest.of(page, 25, Sort.by("startDate").descending());
+        PageRequest pageRequest = PageRequest.of(page, 15, Sort.by("startDate").descending());
         Page<Activity> activities = activityService.findAll(pageRequest);
         model.addAttribute("activities", activities);
         model.addAttribute("currentPage", page);

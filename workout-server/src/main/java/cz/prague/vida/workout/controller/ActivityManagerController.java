@@ -4,7 +4,11 @@ import cz.prague.vida.strava.api.StravaV3Client;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.workout.configuration.StravaConfiguration;
 import cz.prague.vida.workout.entity.Activity;
+import cz.prague.vida.workout.entity.ActivityStream;
 import cz.prague.vida.workout.service.ActivityService;
+import cz.prague.vida.workout.service.ActivityStreamService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -16,9 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/manage")
@@ -27,12 +29,16 @@ public class ActivityManagerController {
     @Value("${manageActions}")
     private List<String> manageActions;
     private final ActivityService activityService;
+    private final ActivityStreamService activityStreamService;
 
     private StravaConfiguration stravaConfiguration;
 
+    Logger logger = LoggerFactory.getLogger(ActivityManagerController.class);
+
     @Autowired
-    public ActivityManagerController(ActivityService activityService, StravaConfiguration stravaConfiguration) {
+    public ActivityManagerController(ActivityService activityService, ActivityStreamService activityStreamService, StravaConfiguration stravaConfiguration) {
         this.activityService = activityService;
+        this.activityStreamService = activityStreamService;
         this.stravaConfiguration = stravaConfiguration;
     }
 
@@ -43,7 +49,7 @@ public class ActivityManagerController {
     }
 
     @RequestMapping("/process")
-    public String manageProcess(@RequestParam("action") String action, Model model) throws IOException, URISyntaxException, ParseException, InterruptedException {
+    public String manageProcess(@RequestParam("action") String action, Model model) throws Exception {
         String result = "Action : " + action + " action has been done";
 
         if ("SYNCHRONIZE_NEW".equals(action)) {
@@ -56,14 +62,22 @@ public class ActivityManagerController {
         return "manage/confirmation";
     }
 
-    private void deleteAllAndSynchronizeActivities() throws IOException, URISyntaxException, InterruptedException, ParseException {
+    private void deleteAllAndSynchronizeActivities() throws Exception {
         StravaV3Client strava = getStravaV3Client();
         activityService.deleteAll();
-        for (int i = 1; i < 60; i++) {
-            List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 30);
+        for (int i = 1; i < 2; i++) {
+            List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 3);
             for (DetailedActivity activity : activities) {
                 Activity workout = convertWorkout(activity);
                 activityService.save(workout);
+                long start = System.currentTimeMillis();
+                List<Map> streams = strava.findActivityStreams(activity.getId(), new String[]{"latlng", "time", "distance", "heartrate", "watts", "altitude", "cadence", "temp", "moving", "grade_smooth", "velocity_smooth"});
+                logger.trace("findActivityStreams last " + (System.currentTimeMillis() - start));
+                start = System.currentTimeMillis();
+                populateStreams(streams, workout);
+                logger.trace("populateStreams last " + (System.currentTimeMillis() - start));
+                start = System.currentTimeMillis();
+                logger.trace("save last " + (System.currentTimeMillis() - start));
             }
         }
     }
@@ -141,5 +155,49 @@ public class ActivityManagerController {
         workout.setYear(calendar.get(Calendar.YEAR));
         workout.setMonth(calendar.get(Calendar.MONTH) + 1);
         workout.setWorkoutDay(calendar.get(Calendar.DAY_OF_YEAR));
+    }
+
+    public void populateStreams(List<Map> streams, Activity activity) throws Exception {
+        List<ActivityStream> list = new ArrayList<>();
+        activity.setActivityStreams(new ArrayList<>());
+        int size = ((List) streams.get(0).get("data")).size();
+        ActivityStream s = new ActivityStream();
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < streams.size(); j++) {
+                Map map = (Map) streams.get(j);
+                String type = (String) map.get("type");
+                Object object = ((List) map.get("data")).get(i);
+                if ("latlng".equals(type)) {
+                   s.setLatlng(String.valueOf(object));
+                } else if ("time".equals(type)) {
+                    s.setTime((Double) object);
+                } else if ("distance".equals(type)) {
+                    s.setDistance((Double) object);
+                } else if ("heartrate".equals(type)) {
+                    s.setHeartrate((Double) object);
+                } else if ("watts".equals(type)) {
+                    s.setWats((Double) object);
+                } else if ("altitude".equals(type)) {
+                    s.setAltitude((Double) object);
+                } else if ("cadence".equals(type)) {
+                    s.setCadence((Double) object);
+                } else if ("temp".equals(type)) {
+                    s.setTemp((Double) object);
+                } else if ("moving".equals(type)) {
+                    s.setMoving((Boolean) object);
+                } else if ("grade_smooth".equals(type)) {
+                    s.setGradeSmooth((Double) object);
+                } else if ("velocity_smooth".equals(type)) {
+                    s.setVelocitySmooth((Double) object);
+                }
+            }
+            s.setPointer(i);
+            s.setActivityId(activity.getId());
+           // activity.getActivityStreams().add(s);
+            list.add(s);
+            s = new ActivityStream();
+        }
+        activityStreamService.saveAll(list);
     }
 }

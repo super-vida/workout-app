@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /strava-sdk/application-secret.properties
+logs/
