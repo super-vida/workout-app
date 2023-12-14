@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container-sm">
 
     <nav class="navbar navbar-expand-md navbar-light pt-5 pb-4">
         <div class="container-xxl">
@@ -38,12 +38,28 @@
         </div>
     </nav>
 
-    <p th:text="${athlete.username}"/>
-    <p th:text="${athlete.password}"/>
+    <form>
+        <fieldset>
+            <legend>Athlete</legend>
+            <div class="mb-3">
+                <label for="username" class="form-label">User name</label>
+                <input disabled th:placeholder="${athlete.username}" type="text" id="username" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input disabled th:placeholder="${athlete.password}" type="text" id="password" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="firstname" class="form-label">First name</label>
+                <input disabled th:placeholder="${athlete.firstname}" type="text" id="firstname" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="lastname" class="form-label">Last name</label>
+                <input disabled th:placeholder="${athlete.lastname}" type="text" id="lastname" class="form-control">
+            </div>
 
-    <form th:action="@{/athlete/refresh}" method="GET">
-        <br/>
-        <button type="submit" class="btn btn-info col-2">Refresh data</button>
+            <button type="submit" th:action="@{/athlete/refresh}" class="btn btn-primary">Refresh data</button>
+        </fieldset>
     </form>
 
 
