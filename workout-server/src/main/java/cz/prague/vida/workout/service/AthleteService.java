@@ -8,4 +8,5 @@ public interface AthleteService {
     Optional<Athlete> getCurrentAthlete();
 
     void save(Athlete athlete);
+    void updateStats(Athlete athlete);
 }

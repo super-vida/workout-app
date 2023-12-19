@@ -12,12 +12,8 @@ import java.util.List;
 public class ActivityStats {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    @Column(name = "athlete_id")
-    private Long athletId;
 
     @Column(name = "biggest_ride_distance")
     private Double biggestRideDistance = null;

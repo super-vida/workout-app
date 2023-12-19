@@ -130,7 +130,7 @@ public class StravaV3Client implements StravaClient {
     }
 
     @Override
-    public DetailedAthlete findAthlete(int id) {
+    public DetailedAthlete findAthlete(Long id) {
 
         String URL = "https://www.strava.com/api/v3/athletes/" + id;
         String result = getResult(URL);
@@ -573,7 +573,7 @@ public class StravaV3Client implements StravaClient {
     }
 
     @Override
-    public List<Route> findAthleteRoutes(int athleteId) {
+    public List<Route> findAthleteRoutes(Long athleteId) {
         String URL = "https://www.strava.com/api/v3/athletes/" + athleteId + "/routes";
         String result = getResult(URL);
 

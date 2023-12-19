@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StravaV3ClientTest {
 
-    private static int athleteId;
+    private static long athleteId;
     long activityId = 0;
 
     private static StravaV3Client strava;

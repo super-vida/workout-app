@@ -16,6 +16,13 @@ public class ActivityTotal {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "total_type")
+    private String totalType;
+
+//    @ManyToOne
+//    @JoinColumn(name = "activity_stats_id" , referencedColumnName = "id")
+//    private ActivityStats activityStats;
+
     @Column(name = "type")
     private String type;
 

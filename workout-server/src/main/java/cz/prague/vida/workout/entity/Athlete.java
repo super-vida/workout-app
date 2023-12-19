@@ -56,11 +56,12 @@ public class Athlete {
     @Column(name = "friend_count")
     private Integer friendCount;
 
-    @OneToMany
-    @JoinColumn(name = "athlete_id")
-    private List<Activity> activities;
+//    @OneToMany
+//    @JoinColumn(name = "athlete_id")
+//    private List<Activity> activities;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "athlete_id")
+    @OneToOne
+    @PrimaryKeyJoinColumn
     private ActivityStats activityStats;
+
 }

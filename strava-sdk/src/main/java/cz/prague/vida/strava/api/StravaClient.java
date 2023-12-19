@@ -18,7 +18,7 @@ public interface StravaClient {
 
     DetailedAthlete getCurrentAthlete();
     Athlete updateAthlete(HashMap optionalParameters);
-    DetailedAthlete findAthlete(int id);
+    DetailedAthlete findAthlete(Long id);
     List<SegmentEffort> findAthleteKOMs(int athleteId);
 
     ActivityStats getAthleteStats(Long athleteId);
@@ -63,7 +63,7 @@ public interface StravaClient {
 
     Route findRoute(int routeId);
 
-    List<Route> findAthleteRoutes(int athleteId);
+    List<Route> findAthleteRoutes(Long athleteId);
 
     Segment findSegment(long segmentId);
     List<Segment> getCurrentStarredSegment();
