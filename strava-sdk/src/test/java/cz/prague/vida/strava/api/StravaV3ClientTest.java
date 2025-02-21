@@ -1,5 +1,6 @@
 package cz.prague.vida.strava.api;
 
+import cz.prague.vida.strava.entities.Activity;
 import cz.prague.vida.strava.model.ActivityStats;
 import cz.prague.vida.strava.model.DetailedActivity;
 import cz.prague.vida.strava.model.DetailedAthlete;
@@ -10,6 +11,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -78,6 +84,24 @@ public class StravaV3ClientTest {
     @Test
     public void testAthleteStats() throws Exception {
         ActivityStats athleteStats = strava.getAthleteStats(athleteId);
+        assertNotNull(athleteStats);
+        System.out.println(athleteStats);
+
+    }
+
+    @Test
+    public void testAfter() throws Exception {
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2010-08-22");
+        long epochMilliSecondsAtTime = date.toInstant().toEpochMilli()/ 1000;
+
+        //ZoneId zoneId = ZoneId.of("Europe/Paris");
+        //LocalDateTime localDateTime = LocalDateTime.parse("2024-08-22T00:00:00");
+        //long epochMilliSecondsAtTime = localDateTime.atZone(zoneId).toInstant().toEpochMilli() / 1000;
+
+        //ZonedDateTime after = ZonedDateTime.of(2024, 8, 22, 0, 0, 0, 0, ZoneId.of("Europe/Vienna"));
+
+        List<DetailedActivity> athleteStats = strava.getCurrentAthleteActivitiesAfter(1, 5, epochMilliSecondsAtTime);
         assertNotNull(athleteStats);
         System.out.println(athleteStats);
 

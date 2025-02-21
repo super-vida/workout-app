@@ -65,8 +65,9 @@ public class ActivityManagerController {
     private void deleteAllAndSynchronizeActivities() throws Exception {
         StravaV3Client strava = getStravaV3Client();
         activityService.deleteAll();
-        for (int i = 1; i < 2; i++) {
-            List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 3);
+        Long count = activityService.count();
+        for (int i = 1; i < 30; i++) {
+            List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 20);
             for (DetailedActivity activity : activities) {
                 Activity workout = convertWorkout(activity);
                 activityService.save(workout);
@@ -83,15 +84,26 @@ public class ActivityManagerController {
     }
 
     private void synchronizeNewActivities() throws IOException, URISyntaxException, InterruptedException, ParseException {
+
+        Date newestActivity = activityService.findNewestActivity();
+
+        System.out.println(newestActivity);
+
+       // return;
+
         StravaV3Client strava = getStravaV3Client();
-        List<DetailedActivity> activities = strava.getCurrentAthleteActivities(1, 30);
-        for (DetailedActivity activity : activities) {
-            Activity workout = convertWorkout(activity);
-            Optional<Activity> savedWorkout = activityService.findById(workout.getId());
-            if (savedWorkout.isEmpty()) {
-                activityService.save(workout);
+        for (int i = 1; i < 30; i++) {
+            List<DetailedActivity> activities = strava.getCurrentAthleteActivities(i, 30);
+            for (DetailedActivity activity : activities) {
+                Activity workout = convertWorkout(activity);
+                Optional<Activity> savedWorkout = activityService.findById(workout.getId());
+                if (savedWorkout.isEmpty()) {
+                    activityService.save(workout);
+                }
             }
         }
+
+
     }
 
     private StravaV3Client getStravaV3Client() throws IOException, URISyntaxException, InterruptedException {

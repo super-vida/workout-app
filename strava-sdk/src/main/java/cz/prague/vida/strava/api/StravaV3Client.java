@@ -377,6 +377,15 @@ public class StravaV3Client implements StravaClient {
         return currentActivities;
     }
 
+    public List<DetailedActivity> getCurrentAthleteActivitiesAfter(int page, int per_page, long after) {
+        String URL = "https://www.strava.com/api/v3/athlete/activities?page=" + page + "&per_page=" + per_page + "&after=" + after;
+        String result = getResult(URL);
+
+        DetailedActivity[] activitiesArray = gson.fromJson(result, DetailedActivity[].class);
+        List<DetailedActivity> currentActivities = Arrays.asList(activitiesArray);
+        return currentActivities;
+    }
+
     @Override
     public List<Activity> getCurrentAthleteActivitiesBeforeDate(long before) {
         String URL = "https://www.strava.com/api/v3/athlete/activities?before=" + before;
